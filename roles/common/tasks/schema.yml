@@ -1,5 +1,5 @@
 - name: Block for MongoDB schema
-  when: schema_type: mongodb
+  when: schema_type == "mongodb"
   block:
     - name: Copy Mongo File
       ansible.builtin.template:
@@ -17,7 +17,7 @@
 
 
 - name: Block for MySQL schema
-  when: schema_type: mysql
+  when: schema_type == "mysql"
   block:
     - name: Install MySQL Client
       ansible.builtin.dnf:
