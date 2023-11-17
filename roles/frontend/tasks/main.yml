@@ -21,7 +21,7 @@
 - name: Copy RoboSHop Nginx Configuration
   ansible.builtin.template:
     src: roboshop.conf
-    dest: /etc/nginx/default.d/nginx.conf
+    dest: /etc/nginx/default.d/roboshop.conf
 
 - name: Restart Nginx Service
   ansible.builtin.systemd:
