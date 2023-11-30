@@ -7,10 +7,10 @@
   ansible.builtin.import_tasks:
     file: app-prereq.yml
 
-- name: Build Java Package
-  ansible.builtin.shell: mvn clean package ; mv target/{{component}}-1.0.jar {{component}}.jar
-  args:
-    chdir: /app
+#- name: Build Java Package
+#  ansible.builtin.shell: mvn clean package ; mv target/{{component}}-1.0.jar {{component}}.jar
+#  args:
+#    chdir: /app
 
 - name: SystemD Setup
   ansible.builtin.import_tasks:
