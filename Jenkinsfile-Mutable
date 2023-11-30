@@ -16,7 +16,7 @@ pipeline {
 
     stage('Update Parameter Store') {
       steps {
-        sh 'aws ssm put-parameter --name "${ENV}.${APP_NAME}.app_version" --type "String" --value "${VERSION}" --overwrite'
+        sh 'aws ssm put-parameter --name "${ENV}.roboshop.${APP_NAME}.app_version" --type "String" --value "${VERSION}" --overwrite'
       }
     }
 
