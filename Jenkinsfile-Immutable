@@ -1,0 +1,41 @@
+pipeline {
+
+  agent any
+
+  options {
+    ansiColor('xterm')
+  }
+
+  parameters {
+    choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Choose Environment')
+    string(name: 'APP_NAME', defaultValue: '', description: 'Which AppName')
+    string(name: 'VERSION', defaultValue: '', description: 'Version to Deploy')
+  }
+
+  stages {
+
+    stage('Update Parameter Store') {
+      steps {
+        sh 'aws ssm put-parameter --name "${ENV}.roboshop.${APP_NAME}.app_version" --type "String" --value "${VERSION}" --overwrite'
+      }
+    }
+
+    stage('Deployment') {
+      steps {
+        script {
+          env.ssh_user = sh (script: 'aws ssm get-parameter --name "ssh_username" --query "Parameter.Value" --output text', returnStdout: true).trim()
+          env.ssh_pass = sh (script: 'aws ssm get-parameter --name "ssh_password" --query "Parameter.Value" --output text --with-decryption --output text', returnStdout: true).trim()
+        }
+        wrap([$class: "MaskPasswordsBuildWrapper", varPasswordPairs: [[password: ssh_pass]]]) {
+
+          sh '''
+            aws autoscaling start-instance-refresh --auto-scaling-group-name ${ENV}-${APP_NAME} --preferences '{"InstanceWarmup": 300, "MinHealthyPercentage": 50}'
+          '''
+        }
+
+      }
+    }
+
+  }
+
+}
